@@ -23,6 +23,9 @@ func (c *AuthController) Login(user auth_entities.UserWithPassword) (string, err
 	fmt.Println(userDB)
 
 	if err != nil {
+		if err.Error() == "record not found" {
+			return "", errors.New("invalid username or password")
+		}
 		return "", err
 
 	}
