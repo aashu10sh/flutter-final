@@ -45,6 +45,13 @@ func AuthRouter(router fiber.Router) {
 		Source:    bind.JSON,
 	}, &auth.LoginRequest{}), func(ctx *fiber.Ctx) error {
 		loginRequest := ctx.Locals(bind.JSON).(*auth.LoginRequest)
-		return ctx.JSON(loginRequest)
+		loggedIn, error := auth_controller.Login(
+			auth_entities.UserWithPassword{Username: loginRequest.UserName, Password: loginRequest.Password},
+		)
+		if error != nil {
+			fmt.Println(error)
+			return ctx.Status(fiber.StatusBadRequest).JSON(error.Error())
+		}
+		return ctx.JSON(loggedIn)
 	})
 }
