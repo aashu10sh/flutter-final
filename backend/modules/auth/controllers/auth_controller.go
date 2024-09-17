@@ -42,11 +42,11 @@ func (c *AuthController) Register(user auth_entities.UserWithPassword) (string, 
 	_, err := usecases.GetUserWithCondition(&c.DB, models.UserModel{Username: user.Username})
 
 	if err == nil {
-		return "", errors.New("user already exists")
+		return "", errors.New("exists")
 	}
 	hashedPassword, error := auth_utils.HashPassword(user.Password)
 	if error != nil {
-		return "", errors.New("unable to Hash the Password")
+		return "", errors.New("hash")
 	}
 
 	err = usecases.CreateUser(&c.DB, auth_entities.UserWithPassword{
@@ -55,7 +55,7 @@ func (c *AuthController) Register(user auth_entities.UserWithPassword) (string, 
 		Username: user.Username,
 	})
 	if err != nil {
-		return "", errors.New("user cannot be created")
+		return "", errors.New("failed")
 	}
 	return auth_utils.SignJWTToken(user.Username)
 }

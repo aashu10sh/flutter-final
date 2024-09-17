@@ -6,6 +6,7 @@ import (
 	auth_controller "github.com/aashu10sh/authapi/modules/auth/controllers"
 	auth_entities "github.com/aashu10sh/authapi/modules/auth/domain/entities/dto"
 	auth "github.com/aashu10sh/authapi/modules/auth/domain/entities/request"
+	auth_response "github.com/aashu10sh/authapi/modules/auth/domain/entities/response"
 	"github.com/aashu10sh/authapi/modules/core/database"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -35,9 +36,18 @@ func AuthRouter(router fiber.Router) {
 		)
 		if error != nil {
 			fmt.Println(error)
-			return ctx.Status(fiber.StatusBadRequest).JSON(error.Error())
+			switch error.Error() {
+			case "exists":
+				fmt.Println("hit here!")
+				return ctx.Status(fiber.StatusNotFound).JSON(error.Error())
+			default:
+				return ctx.Status(fiber.StatusBadRequest).JSON(error.Error())
+			}
 		}
-		return ctx.JSON(registered)
+		data := auth_response.TokenResponse{
+			Token: registered,
+		}
+		return ctx.JSON(data)
 	})
 
 	router.Post("/login", bind.New(bind.Config{
