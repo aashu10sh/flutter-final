@@ -1,14 +1,14 @@
 import 'package:frontend/controller/session_controller.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController {
+  static const IPADDRESS = "192.168.103.88";
   Future<int> registerUser(String name, String email, String password) async {
     try {
       final postRequest = await http.post(
-        Uri.parse("http://192.168.18.9:1337/api/v1/auth/register"),
+        Uri.parse("http://$IPADDRESS:1337/api/v1/auth/register"),
         headers: <String, String>{'Content-Type': 'application/json'},
         body: jsonEncode(
           <String, String>{
@@ -18,16 +18,20 @@ class AuthController {
           },
         ),
       );
+      print("Post Request Response!");
+      print(postRequest.statusCode);
       switch (postRequest.statusCode) {
         case 200:
           final response = jsonDecode(postRequest.body);
           print('obtained:)');
+          print(response);
+          print(response.accessToken);
           final session = response["accessToken"];
           final sharedPref = await SharedPreferences.getInstance();
           final sessionController = SessionController(preferences: sharedPref);
           sessionController.createSession(session);
           break;
-        case 404:
+        case 400:
           return 404;
         // return 404
         default:

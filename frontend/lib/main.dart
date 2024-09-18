@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/initial_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(MainApplication());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  runApp(MainApplication(
+    preferences: prefs,
+  ));
 }
 
 class MainApplication extends StatelessWidget {
-  const MainApplication({super.key});
+  final SharedPreferences preferences;
+  const MainApplication({super.key, required this.preferences});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +25,9 @@ class MainApplication extends StatelessWidget {
             labelMedium: TextStyle(color: Colors.white),
             labelLarge: TextStyle(color: Colors.white)),
       ),
-      home: InitialPage(),
+      home: InitialPage(
+        prefs: preferences,
+      ),
     );
   }
 }

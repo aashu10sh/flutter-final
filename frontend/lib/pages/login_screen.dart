@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend/controller/auth_controller.dart';
 import 'package:frontend/pages/home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final SharedPreferences preferences;
+  const LoginScreen({super.key, required this.preferences});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -128,9 +130,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (_formKey.currentState!.validate()) {
                         print(_emailController.text);
                         final response = await authController.registerUser(
-                            _nameController.text,
-                            _emailController.text,
-                            _passwordController.text);
+                          _nameController.text,
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+
+                        print("The Response is $response");
 
                         switch (response) {
                           case 404:
@@ -143,11 +148,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                builder: (context) => HomeScreen(
+                                  preferences: widget.preferences,
+                                ),
+                              ),
                             );
+                          default:
+                            print(response);
+                            print("Error");
                         }
-                        // If the form is valid, display a snackbar. In the real world,
-                        // you'd often call a server or save the information in a database.
                       }
                     },
                     style: ElevatedButton.styleFrom(

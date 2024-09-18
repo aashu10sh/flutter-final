@@ -5,38 +5,30 @@ import 'package:frontend/pages/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InitialPage extends StatefulWidget {
-  const InitialPage({super.key});
+  final SharedPreferences prefs;
+
+  const InitialPage({super.key, required this.prefs});
 
   @override
   State<InitialPage> createState() => _InitialPageState();
 }
 
 class _InitialPageState extends State<InitialPage> {
-  late AuthState state = AuthState.noToken;
-
   @override
   Widget build(BuildContext context) {
-    @override
-    void initState() async {
-      super.initState();
-      print("initial state runs!");
-      final sharedPreference = await SharedPreferences.getInstance();
-      final SessionController sessionController =
-          SessionController(preferences: sharedPreference);
-      final session = await sessionController.getSession();
-      if (session == null) {
-        state = AuthState.noToken;
-      } else {
-        state = AuthState.token;
-      }
+    String? token = widget.prefs.getString("session");
+    AuthState state = AuthState.noToken;
+    if (token != null) {
+      state = AuthState.token;
     }
-
     switch (state) {
       case AuthState.token:
-        return HomeScreen();
+        return HomeScreen(
+          preferences: widget.prefs,
+        );
       case AuthState.noToken:
         print("login screen!");
-        return LoginScreen();
+        return LoginScreen(preferences: widget.prefs);
       default:
     }
     return const Placeholder();
