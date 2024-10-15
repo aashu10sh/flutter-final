@@ -25,13 +25,14 @@ class AuthController {
           final response = jsonDecode(postRequest.body);
           print('obtained:)');
           print(response);
-          print(response.accessToken);
+          // print(response.accessToken);
           final session = response["accessToken"];
+          print("The Session is $session");
           final sharedPref = await SharedPreferences.getInstance();
           final sessionController = SessionController(preferences: sharedPref);
           sessionController.createSession(session);
           break;
-        case 400:
+        case 404:
           return 404;
         // return 404
         default:

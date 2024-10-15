@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: GoogleFonts.lato(
                 color: Colors.white,
                 fontSize: 45,
-                fontWeight: FontWeight.bold,
+                // fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(
